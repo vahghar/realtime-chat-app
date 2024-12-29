@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import User from '../models/user.model.js';
 import { generateToken } from '../lib/utils.js';
+import cloudinary from '../lib/cloudinary.js';
 
 export const signup = async (req, res) => 
 {
@@ -27,7 +28,8 @@ export const signup = async (req, res) =>
         if(newUser){
             generateToken(newUser._id,res);
             await newUser.save();
-            return res.status(201).json({_id:newUser._id,username:newUser.username,email:newUser.email,profilePic:newUser.profilePic})
+            return res.status(201).json({_id:newUser._id,username:newUser.username,email:newUser.email,profilePic:newUser.profilePic,createdAt:newUser.createdAt
+            })
         }
         else{
             res.status(400).json({message:"User not created"})
@@ -44,7 +46,7 @@ export const login = async (req,res) =>{
         if(!email || !password){
             return res.status(400).json({message:"Please fill all the fields"})
         }
-        const user = await User .findOne({email});
+        const user = await User.findOne({email});
         if(!user){
             return res.status(400).json({message:"User does not exist with this email"})
         }
@@ -70,17 +72,28 @@ export const logout = (req,res) =>{
     }
 }
 
-export const update = (req,res) =>{
+export const update = async (req,res) =>{
     try {
         const {profilePic} = req.body;
         const userId = req.user._id;
         if(!profilePic){
             return res.status(400).json({message:"Please provide a profile picture"})
         }
-        const uploadResponse = ;
+        const uploadResponse = await cloudinary.uploader.upload(profilePic);
+        const updatedUser = await User.findByIdAndUpdate(userId,{profilePic:uploadResponse.secure_url},{new:true});
+        res.status(200).json({_id:updatedUser._id,username:updatedUser.username,email:updatedUser.email,profilePic:updatedUser.profilePic})
     } catch (error) {
         console.log(error)
         return res.status(500).json({message:"Internal server error"})
         
+    }
+}
+
+export const checkAuth = async (req,res) =>{
+    try {
+        res.status(200).json({_id:req.user._id,username:req.user.username,email:req.user.email,profilePic:req.user.profilePic})
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({message:"Internal server error"})
     }
 }
