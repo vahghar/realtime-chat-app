@@ -95,5 +95,13 @@ export const useAuthStore = create((set,get) => ({
         if(get().socket?.connected){
             get().socket.disconnect();
         }
+    },
+    sendPassLink: async (email) =>{
+        try {
+            await axiosInstance.post("/auth/forgot-password-link", {email});
+            toast.success("Password reset link sent to your email")
+        } catch (error) {
+            toast.error(error.response.data.message)
+        }
     }
 }));

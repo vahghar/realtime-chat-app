@@ -10,6 +10,8 @@ import { useEffect } from 'react'
 import { Loader } from 'lucide-react'
 import { Toaster } from 'react-hot-toast'
 import { useThemeStore } from './store/useThemeStore'
+import ForgotPassLink from './pages/ForgotPassLink'
+import ResetPasswordPage from './pages/ResetPasswordPage'
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore()
@@ -36,6 +38,8 @@ function App() {
         <Route path="/signup" element={!authUser ? <SignupPage /> : <Navigate to="/" />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
+        <Route path="/forgot-pass-link" element={<ForgotPassLink/>} />
+        <Route path="/reset-password/:token" element={<ResetPasswordPage/>} />
       </Routes>
 
       <Toaster />

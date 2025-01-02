@@ -10,7 +10,7 @@ import { app,server } from "./lib/socket.js";
 dotenv.config()
 const PORT = process.env.PORT || 8080;
 
-app.get("/", (req, res) => {
+app.get("/", (res) => {
     res.send("Hello welcome to real time chat app");
 });
 

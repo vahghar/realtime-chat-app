@@ -17,7 +17,7 @@ const LoginPage = () => {
         login(formData);
     };
     return (
-        <div className="h-screen grid lg:grid-cols-2">
+        <div className="h-full grid lg:grid-cols-2">
             {/* Left Side - Form */}
             <div className="flex flex-col justify-center items-center p-6 sm:p-12">
                 <div className="w-full max-w-md space-y-8">
@@ -101,6 +101,11 @@ const LoginPage = () => {
                             Don&apos;t have an account?{" "}
                             <Link to="/signup" className="link link-primary">
                                 Create account
+                            </Link>
+                        </p>
+                        <p className="text-base-content/60">
+                            <Link to="/forgot-pass-link" className="link link-primary">
+                                Forgot Password?
                             </Link>
                         </p>
                     </div>
