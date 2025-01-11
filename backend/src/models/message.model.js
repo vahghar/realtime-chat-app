@@ -4,20 +4,24 @@ const messageSchema = new mongoose.Schema({
     senderId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref:"User"
+        ref: "User"
     },
-    receiverId:{
+    receiverId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref:"User"
+        ref: "User"
     },
-    text:{
+    encryptedText: {  // renamed from text to encryptedText for clarity
         type: String,
     },
-    image:{
+    image: {
         type: String,
+    },
+    isEncrypted: {    // flag to indicate if message is encrypted
+        type: Boolean,
+        default: true
     }
-},{timestamps:true});
+}, { timestamps: true });
 
 const Message = mongoose.model("Message", messageSchema);
 export default Message;

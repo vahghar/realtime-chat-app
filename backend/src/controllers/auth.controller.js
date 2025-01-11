@@ -4,6 +4,7 @@ import { generateToken } from '../lib/utils.js';
 import cloudinary from '../lib/cloudinary.js';
 import nodemailer from "nodemailer";
 import jwt from 'jsonwebtoken';
+import { generateKeyPair } from '../lib/utils.js';
 
 
 const transporter = nodemailer.createTransport({
@@ -16,6 +17,7 @@ const transporter = nodemailer.createTransport({
 
 export const signup = async (req, res) => {
     const { username, email, password } = req.body;
+    const { publicKey, privateKey } = await generateKeyPair();
     try {
         if (!username || !email || !password) {
             return res.status(400).json({ message: "Please fill all the fields" })
@@ -33,13 +35,15 @@ export const signup = async (req, res) => {
         const newUser = new User({
             username,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            publicKey: JSON.stringify(publicKey)
         });
         if (newUser) {
             generateToken(newUser._id, res);
             await newUser.save();
             return res.status(201).json({
-                _id: newUser._id, username: newUser.username, email: newUser.email, profilePic: newUser.profilePic, createdAt: newUser.createdAt
+                _id: newUser._id, username: newUser.username, email: newUser.email, profilePic: newUser.profilePic, createdAt: newUser.createdAt,
+                privateKey: JSON.stringify(privateKey)
             })
         }
         else {
