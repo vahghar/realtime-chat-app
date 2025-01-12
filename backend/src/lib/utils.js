@@ -61,28 +61,3 @@ export async function encryptMessage(message, publicKeyJwk) {
 
     return Buffer.from(encryptedBuffer).toString('base64');
 }
-
-// Decrypt message
-export async function decryptMessage(encryptedMessage, privateKeyJwk) {
-    const privateKey = await webcrypto.subtle.importKey(
-        "jwk",
-        privateKeyJwk,
-        {
-            name: "RSA-OAEP",
-            hash: "SHA-256",
-        },
-        true,
-        ["decrypt"]
-    );
-
-    const encryptedBuffer = Buffer.from(encryptedMessage, 'base64');
-
-    const decryptedBuffer = await webcrypto.subtle.decrypt(
-        { name: "RSA-OAEP" },
-        privateKey,
-        encryptedBuffer
-    );
-
-    const decoder = new TextDecoder();
-    return decoder.decode(decryptedBuffer);
-}

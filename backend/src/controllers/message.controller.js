@@ -1,7 +1,7 @@
 import { getReceiverSocketId, io } from "../lib/socket.js";
 import Message from "../models/message.model.js";
 import User from "../models/user.model.js";
-import { encryptMessage,decryptMessage } from "../lib/utils.js";
+import { encryptMessage} from "../lib/utils.js";
 
 export const getUsers = async (req,res) =>{
     try {
@@ -26,28 +26,7 @@ export const getMessages = async (req, res) => {
                 { senderId: userToChatId, receiverId: myId }
             ]
         }).sort({ createdAt: 1 });
-
-        // Decrypt messages where current user is the receiver
-        const decryptedMessages = await Promise.all(messages.map(async message => {
-            const messageObj = message.toObject();
-            
-            // Only decrypt if user is the receiver and message has encrypted text
-            if (message.receiverId.equals(myId) && message.encryptedText) {
-                try {
-                    messageObj.text = await decryptMessage(
-                        message.encryptedText,
-                        req.user.privateKey,
-                    );
-                } catch (error) {
-                    console.error('Decryption failed for message:', message._id);
-                    messageObj.text = '[Decryption failed]';
-                }
-            }
-            
-            return messageObj;
-        }));
-
-        res.status(200).json(decryptedMessages);
+        res.status(200).json(messages);
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: "Internal server error" });

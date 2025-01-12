@@ -27,3 +27,30 @@ export const formatDateTime = (dateString) => {
         return `${formattedDate} at ${formattedTime}`; // Returns: "Dec 28 at 8:28 AM"
     }
 };
+export async function decryptMessage(encryptedMessage, key) {
+    // Import the private key from JWK format using the Web Crypto API
+    const privKey = await crypto.subtle.importKey(
+        "jwk",
+        key,
+        {
+            name: "RSA-OAEP",
+            hash: { name: "SHA-256" }, // Ensure hash is correctly specified
+        },
+        true,
+        ["decrypt"]
+    );
+
+    // Decode the base64-encoded encrypted message into a byte array
+    const encryptedBuffer = Uint8Array.from(atob(encryptedMessage), c => c.charCodeAt(0));
+
+    // Decrypt the encrypted message using the private key
+    const decryptedBuffer = await crypto.subtle.decrypt(
+        { name: "RSA-OAEP" },
+        privKey,
+        encryptedBuffer
+    );
+
+    // Decode the decrypted buffer into a string
+    const decoder = new TextDecoder();
+    return decoder.decode(decryptedBuffer);
+}
