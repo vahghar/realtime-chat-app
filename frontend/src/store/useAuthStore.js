@@ -13,6 +13,8 @@ export const useAuthStore = create((set,get) => ({
     onlineUsers:[],
     isCheckingAuth: true,
     socket:null,
+    friends: [],
+    isLoadingFriends: false,
     
     checkAuth: async () =>{
         try {
@@ -88,7 +90,7 @@ export const useAuthStore = create((set,get) => ({
 
         set({socket:socket});
 
-        socket.on("getOnlineUsers ",(userIds)=>{
+        socket.on("getOnlineUsers",(userIds)=>{
             set({onlineUsers: userIds});
         })
     },
@@ -103,6 +105,53 @@ export const useAuthStore = create((set,get) => ({
             toast.success("Password reset link sent to your email")
         } catch (error) {
             toast.error(error.response.data.message)
+        }
+    },
+
+    // Friend management functions
+    addFriend: async (email) => {
+        set({ isLoadingFriends: true });
+        try {
+            const res = await axiosInstance.post("/friends/add", { email });
+            set(state => ({
+                friends: [...state.friends, res.data.friend]
+            }));
+            toast.success("Friend added successfully");
+            return res.data.friend;
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to add friend");
+            throw error;
+        } finally {
+            set({ isLoadingFriends: false });
+        }
+    },
+
+    getFriends: async () => {
+        set({ isLoadingFriends: true });
+        try {
+            const res = await axiosInstance.get("/friends");
+            set({ friends: res.data });
+            return res.data;
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to fetch friends");
+            return [];
+        } finally {
+            set({ isLoadingFriends: false });
+        }
+    },
+
+    removeFriend: async (friendId) => {
+        set({ isLoadingFriends: true });
+        try {
+            await axiosInstance.delete(`/friends/${friendId}`);
+            set(state => ({
+                friends: state.friends.filter(friend => friend._id !== friendId)
+            }));
+            toast.success("Friend removed successfully");
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to remove friend");
+        } finally {
+            set({ isLoadingFriends: false });
         }
     }
 }));

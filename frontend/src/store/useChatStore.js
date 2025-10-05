@@ -6,7 +6,7 @@ import { decryptMessage } from "../lib/utils";
 
 export const useChatStore = create((set, get) => ({
     messages: [],
-    users: [],
+    users: [], // This will now be friends
     selectedUser: null,
     isUserLoading: false,
     isMessagesLoading: false,
@@ -14,8 +14,9 @@ export const useChatStore = create((set, get) => ({
     getUsers: async () => {
         set({ isUserLoading: true });
         try {
-            const res = await axiosInstance.get("/message/users");
-            set({ users: res.data });
+            // Get friends from auth store instead of separate API call
+            const friends = useAuthStore.getState().friends;
+            set({ users: friends });
         } catch (error) {
             toast.error(error.response?.data?.message || "Failed to fetch users");
         } finally {
@@ -70,28 +71,83 @@ export const useChatStore = create((set, get) => ({
 
     subscribeToMessages: () => {
         const socket = useAuthStore.getState().socket;
-        if (!socket) return;
-        console.log("Subscribing to 'newMessage' events...");
+        const { authUser } = useAuthStore.getState();
+
+        console.log("🔧 subscribeToMessages called");
+        console.log("🔧 Socket exists:", !!socket);
+        console.log("🔧 Socket connected:", socket?.connected);
+        console.log("🔧 AuthUser exists:", !!authUser);
+
+        if (!socket) {
+            console.log("❌ No socket available");
+            return;
+        }
+
+        if (!authUser) {
+            console.log("❌ No authUser available");
+            return;
+        }
+
+        console.log("✅ Setting up newMessage listener for user:", authUser._id);
+        console.log("🔌 Socket ID:", socket.id);
+
+        // Test event listener to verify socket is working
+        socket.on("testEvent", (data) => {
+            console.log("🧪 Test event received:", data);
+        });
+
         socket.on("newMessage", async (newMessage) => {
-            console.log("Received 'newMessage' event:", newMessage);
-            const { selectedUser } = get();
-            const privateKey = localStorage.getItem('privateKey');
-            console.log(`Is this message from the selected user? Sender: ${newMessage.senderId}, Selected: ${selectedUser?._id}`);
-            if (newMessage.senderId === selectedUser?._id) {
-                console.log("Message is for the selected user. Decrypting...");
+            console.log("📨 RECEIVED newMessage event:", {
+                messageId: newMessage._id,
+                senderId: newMessage.senderId,
+                receiverId: newMessage.receiverId,
+                text: newMessage.text,
+                hasEncryptedText: !!newMessage.encryptedText,
+                hasEncryptedTextForSender: !!newMessage.encryptedTextForSender
+            });
+            console.log("👤 Current user ID:", authUser._id);
+            console.log("🔌 Current socket ID:", socket.id);
+            console.log("✅ Is receiver match?", newMessage.receiverId === authUser._id);
+
+            if (newMessage.receiverId === authUser._id) {
+                console.log("🎯 Message is for current user, processing...");
+
                 try {
-                    const decryptedText = await decryptMessage(
-                        newMessage.encryptedText,
-                        JSON.parse(privateKey)
-                    );
+                    let decryptedText = "";
+
+                    if (newMessage.receiverId === authUser._id && newMessage.encryptedText) {
+                        console.log("🔓 Decrypting as receiver with encryptedText");
+                        decryptedText = await decryptMessage(newMessage.encryptedText, JSON.parse(localStorage.getItem('privateKey')));
+                    } else if (newMessage.senderId === authUser._id && newMessage.encryptedTextForSender) {
+                        console.log("🔓 Decrypting as sender with encryptedTextForSender");
+                        decryptedText = await decryptMessage(newMessage.encryptedTextForSender, JSON.parse(localStorage.getItem('privateKey')));
+                    } else {
+                        console.log("⚠️ No appropriate encrypted field found");
+                        decryptedText = newMessage.text || "[No text available]";
+                    }
+
+                    console.log("✅ Decrypted text:", decryptedText);
                     const decryptedMessage = { ...newMessage, text: decryptedText };
-                    set(state => ({ messages: [...state.messages, decryptedMessage] }));
+                    set(state => ({
+                        messages: [...state.messages, decryptedMessage]
+                    }));
+                    console.log("✅ Message added to state");
                 } catch (error) {
-                    console.error('Failed to decrypt incoming message:', error);
-                    set(state => ({ messages: [...state.messages, { ...newMessage, text: "[Decryption Failed]" }] }));
+                    console.error('❌ Failed to decrypt incoming message:', error);
+                    set(state => ({
+                        messages: [...state.messages, { ...newMessage, text: "[Decryption Failed]" }]
+                    }));
                 }
+            } else {
+                console.log("❌ Message not for current user, ignoring");
             }
         });
+
+        // Return cleanup function
+        return () => {
+            console.log("🧹 Cleaning up newMessage listener");
+            socket.off("newMessage");
+        };
     },
 
     unsubscribeFromMessages: () => {
