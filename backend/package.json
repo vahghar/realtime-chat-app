@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
+    "build": "npm ci --only=production",
     "cleanup:test-users": "node --experimental-json-modules scripts/cleanupTestUsers.js"
   },
   "keywords": [],
