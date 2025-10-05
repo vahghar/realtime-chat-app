@@ -36,7 +36,8 @@ export const signup = async (req, res) => {
             username,
             email,
             password: hashedPassword,
-            publicKey: JSON.stringify(publicKey)
+            publicKey: JSON.stringify(publicKey),
+            privateKey: JSON.stringify(privateKey)
         });
         if (newUser) {
             generateToken(newUser._id, res);
@@ -61,7 +62,7 @@ export const login = async (req, res) => {
         if (!email || !password) {
             return res.status(400).json({ message: "Please fill all the fields" })
         }
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).select("+password +privateKey");
         if (!user) {
             return res.status(400).json({ message: "User does not exist with this email" })
         }
@@ -70,7 +71,14 @@ export const login = async (req, res) => {
             return res.status(400).json({ message: "Invalid credentials" })
         }
         generateToken(user._id, res);
-        return res.status(200).json({ _id: user._id, username: user.username, email: user.email, profilePic: user.profilePic })
+        return res.status(200).json({ 
+            _id: user._id, 
+            username: user.username, 
+            email: user.email, 
+            profilePic: user.profilePic,
+            privateKey: user.privateKey,
+            createdAt: user.createdAt 
+        })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ message: "Internal server error" })
@@ -106,7 +114,7 @@ export const update = async (req, res) => {
 
 export const checkAuth = async (req, res) => {
     try {
-        res.status(200).json({ _id: req.user._id, username: req.user.username, email: req.user.email, profilePic: req.user.profilePic })
+        res.status(200).json({ _id: req.user._id, username: req.user.username, email: req.user.email, profilePic: req.user.profilePic, createdAt: req.user.createdAt })
     } catch (error) {
         console.log(error)
         return res.status(500).json({ message: "Internal server error" })

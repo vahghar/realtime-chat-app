@@ -1,31 +1,50 @@
-import express from "express"
-import authRoutes from "./routes/auth.route.js"
-import dotenv from "dotenv"
+import express from "express";
+import authRoutes from "./routes/auth.route.js";
+import dotenv from "dotenv";
 import { connectDb } from "./lib/dbConnect.js";
-import cookieParser from "cookie-parser"
-import messageRoutes from "./routes/message.route.js"
-import cors from "cors"
-import { app,server } from "./lib/socket.js";
+import cookieParser from "cookie-parser";
+import messageRoutes from "./routes/message.route.js";
+import cors from "cors";
+import { app, server } from "./lib/socket.js";
 
-dotenv.config()
-const PORT = process.env.PORT || 8080;
+dotenv.config();
+const PORT = process.env.PORT || 5001; // Changed to 5001 to match your usage
 
-app.get("/", (res) => {
+// Configure allowed origins
+const allowedOrigins = [
+  "https://realtime-chat-app-delta-flame.vercel.app",
+  "http://localhost:5173" // Keep for local development
+];
+
+// Enhanced CORS configuration
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      const msg = `The CORS policy for this site does not allow access from ${origin}`;
+      return callback(new Error(msg), false);
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
+}));
+
+app.use(express.json());
+app.use(cookieParser());
+
+app.get("/", (req,res) => {  // Fixed: added req parameter
     res.send("Hello welcome to real time chat app");
 });
 
-app.use(express.json())
-app.use(cookieParser())
-app.use(cors({
-    origin: "http://localhost:5173",
-    credentials: true
-}
-))
-
-app.use("/api/auth", authRoutes)
-app.use("/api/message", messageRoutes)
+app.use("/api/auth", authRoutes);
+app.use("/api/message", messageRoutes);
 
 server.listen(PORT, () => {
-    console.log("server is running on port 5001")
+    console.log(`Server is running on port ${PORT}`); // Dynamic port logging
     connectDb();
-})
+});

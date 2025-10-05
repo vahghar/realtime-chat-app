@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please provide a password"],
         minLength: 6,
+        select: false,
     },
     profilePic:{
         type: String,
@@ -22,7 +23,12 @@ const userSchema = new mongoose.Schema({
     publicKey:{
         type: String,
         required: true,
-    }
+    },
+    privateKey: {
+        type: String,
+        required: true,
+        select: false,
+    },
 },{timestamps:true});
 
 const User = mongoose.model("User", userSchema);

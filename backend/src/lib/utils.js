@@ -58,6 +58,38 @@ export async function encryptMessage(message, publicKeyJwk) {
         publicKey,
         messageBuffer
     );
-
     return Buffer.from(encryptedBuffer).toString('base64');
 }
+
+// Decrypt message
+export const decryptMessage = async (encryptedText, privateKey) => {
+    try {
+        console.log("[decryptMessage] Importing private key...");
+        const key = await webcrypto.subtle.importKey(
+            'jwk',
+            privateKey,
+            { name: 'RSA-OAEP', hash: 'SHA-256' },
+            true,
+            ['decrypt']
+        );
+        console.log("[decryptMessage] Private key imported successfully.");
+
+        const buffer = Buffer.from(encryptedText, 'base64');
+        console.log(`[decryptMessage] Created buffer with length: ${buffer.length}`);
+
+        const decrypted = await webcrypto.subtle.decrypt(
+            { name: 'RSA-OAEP' },
+            key,
+            buffer
+        );
+        console.log(`[decryptMessage] crypto.subtle.decrypt executed. Result length: ${decrypted.byteLength}`);
+
+        const decodedText = new TextDecoder().decode(decrypted);
+        console.log(`[decryptMessage] Decoded text: ${decodedText}`);
+        return decodedText;
+    } catch (error) {
+        console.error("[decryptMessage] An error occurred inside decryptMessage:", error);
+        // Re-throw the error so the calling function's catch block is triggered
+        throw error;
+    }
+};
