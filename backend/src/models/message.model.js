@@ -14,6 +14,9 @@ const messageSchema = new mongoose.Schema({
     encryptedText: {  // renamed from text to encryptedText for clarity
         type: String,
     },
+    encryptedTextForSender: {
+        type: String,
+    },
     image: {
         type: String,
     },

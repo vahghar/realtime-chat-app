@@ -1,16 +1,15 @@
 import express from "express";
 import authRoutes from "./routes/auth.route.js";
+import messageRoutes from "./routes/message.route.js";
+import friendsRoutes from "./routes/friends.route.js";
 import dotenv from "dotenv";
 import { connectDb } from "./lib/dbConnect.js";
 import cookieParser from "cookie-parser";
-import messageRoutes from "./routes/message.route.js";
 import cors from "cors";
 import { app, server } from "./lib/socket.js";
 
 dotenv.config();
 const PORT = process.env.PORT || 5001; // Changed to 5001 to match your usage
-
-// Configure allowed origins
 const allowedOrigins = [
   "https://realtime-chat-app-delta-flame.vercel.app",
   "http://localhost:5173" // Keep for local development
@@ -43,6 +42,7 @@ app.get("/", (req,res) => {  // Fixed: added req parameter
 
 app.use("/api/auth", authRoutes);
 app.use("/api/message", messageRoutes);
+app.use("/api/friends", friendsRoutes);
 
 server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`); // Dynamic port logging

@@ -23,12 +23,12 @@ io.on("connection",(socket)=>{
     console.log("a user connected ",socket.id);
 
     const userId = socket.handshake.query.userId;
-    if(userId){
+    if (userId && userId !== "undefined") {
         userSocketMap[userId] = socket.id;
     }
 
     //send events to all connected clients
-    io.emit("getOnlineUsers ",Object.keys(userSocketMap));
+    io.emit("getOnlineUsers",Object.keys(userSocketMap));
 
     socket.on("disconnect",()=>{
         console.log("a user disconnected ",socket.id);
