@@ -14,6 +14,8 @@ import ForgotPassLink from './pages/ForgotPassLink'
 import ResetPasswordPage from './pages/ResetPasswordPage'
 import LandingPage from './pages/LandingPage'
 
+console.log("THE LIVE VITE_API_URL IS:", import.meta.env.VITE_API_URL);
+
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore()
   useEffect(() => {
