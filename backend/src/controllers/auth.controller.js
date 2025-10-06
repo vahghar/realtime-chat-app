@@ -131,7 +131,7 @@ export const forgotPassLink = async (req, res) => {
     }
     const resetToken = jwt.sign({ userId: user._id, purpose: 'reset' }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    const reset_url = `http://localhost:5173/reset-password/${resetToken}`
+    const reset_url = `${process.env.VITE_API_URL}/reset-password/${resetToken}`
 
     await transporter.sendMail({
         from: process.env.EMAIL_USER,

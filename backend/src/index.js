@@ -12,7 +12,7 @@ dotenv.config();
 const PORT = process.env.PORT || 5001; // Changed to 5001 to match your usage
 const allowedOrigins = [
   "https://realtime-chat-app-delta-flame.vercel.app",
-  "http://localhost:5173", // Keep for local development,
+  "http://localhost:5173",
   "https://chat-app-backend-8oyh.onrender.com"
 ];
 
