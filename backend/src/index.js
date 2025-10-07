@@ -13,8 +13,8 @@ const PORT = process.env.PORT || 5001; // Changed to 5001 to match your usage
 const allowedOrigins = [
   "https://realtime-chat-app-delta-flame.vercel.app",
   "http://localhost:5173",
-  "https://chat-app-backend-8oyh.onrender.com"
-];
+  process.env.FRONTEND_URL // Allow any additional frontend URLs from env
+].filter(Boolean); // Remove any undefined values
 
 // Enhanced CORS configuration
 app.use(cors({
@@ -39,6 +39,16 @@ app.use(cookieParser());
 
 app.get("/", (req,res) => {  // Fixed: added req parameter
     res.send("Hello welcome to real time chat app");
+});
+
+// Health check endpoint for debugging
+app.get("/api/health", (req, res) => {
+    res.json({
+        status: "OK",
+        message: "Backend server is running",
+        timestamp: new Date().toISOString(),
+        port: PORT
+    });
 });
 
 app.use("/api/auth", authRoutes);
