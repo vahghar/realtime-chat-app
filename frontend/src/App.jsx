@@ -14,7 +14,7 @@ import ForgotPassLink from './pages/ForgotPassLink'
 import ResetPasswordPage from './pages/ResetPasswordPage'
 import LandingPage from './pages/LandingPage'
 import GraffitiWall from './pages/GraffitiWall'
-
+//deploy
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore()
   useEffect(() => {
