@@ -13,8 +13,7 @@ import { useThemeStore } from './store/useThemeStore'
 import ForgotPassLink from './pages/ForgotPassLink'
 import ResetPasswordPage from './pages/ResetPasswordPage'
 import LandingPage from './pages/LandingPage'
-
-console.log("THE LIVE VITE_API_URL IS:", import.meta.env.VITE_API_URL);
+import GraffitiWall from './pages/GraffitiWall'
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore()
@@ -43,6 +42,7 @@ function App() {
         <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
         <Route path="/forgot-pass-link" element={<ForgotPassLink/>} />
         <Route path="/reset-password/:token" element={<ResetPasswordPage/>} />
+        <Route path="/graffiti" element={<GraffitiWall />} />
       </Routes>
 
       <Toaster />

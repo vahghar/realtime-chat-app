@@ -2,14 +2,16 @@ import { useEffect, useState } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton";
-import { Users, UserPlus } from "lucide-react";
+import { Users, UserPlus, Trash} from "lucide-react";
 import AddFriend from "./AddFriend";
+import { useNavigate } from 'react-router-dom';
 
 const Sidebar = () => {
   const { getUsers, users, selectedUser, setSelectedUser, isUserLoading } = useChatStore();
-  const { onlineUsers, getFriends, friends } = useAuthStore();
+  const { onlineUsers, getFriends, friends, removeFriend } = useAuthStore();
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
   const [showAddFriend, setShowAddFriend] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Get friends when component mounts
@@ -27,6 +29,10 @@ const Sidebar = () => {
   };
 
   const filteredUsers = showOnlineOnly ? users.filter((user) => onlineUsers.includes(user._id)) : users;
+
+  const handleRemoveFriend = async (friendId) =>{
+    await removeFriend(friendId);
+  }
 
   if (isUserLoading) return <SidebarSkeleton />;
 
@@ -91,12 +97,31 @@ const Sidebar = () => {
                   {onlineUsers.includes(user._id) ? "Online" : "Offline"}
                 </div>
               </div>
+              <button onClick={(e)=>{
+                e.stopPropagation();
+                handleRemoveFriend(user._id);
+              }}>
+                <Trash className="size-4" />
+              </button>
             </button>
           ))}
 
           {filteredUsers.length === 0 && !isUserLoading && (
             <div className="text-center text-zinc-500 py-4">
-              {friends.length === 0 ? "No friends yet. Add some friends!" : "No friends online"}
+              {friends.length === 0 ? (
+                <div>
+                  No friends yet. Add some friends!
+                  <br />
+                  <button
+                    onClick={() => navigate('/graffiti')}
+                    className="text-primary hover:text-primary-focus underline mt-2 text-sm"
+                  >
+                    need new friends??
+                  </button>
+                </div>
+              ) : (
+                "No friends online"
+              )}
             </div>
           )}
         </div>
