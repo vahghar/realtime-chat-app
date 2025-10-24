@@ -101,7 +101,7 @@ const Sidebar = () => {
                 e.stopPropagation();
                 handleRemoveFriend(user._id);
               }}>
-                <Trash className="size-4" />
+                <Trash className="ml-10 size-4" />
               </button>
             </button>
           ))}
@@ -112,12 +112,12 @@ const Sidebar = () => {
                 <div>
                   No friends yet. Add some friends!
                   <br />
-                  <button
+                  {/*<button
                     onClick={() => navigate('/graffiti')}
                     className="text-primary hover:text-primary-focus underline mt-2 text-sm"
                   >
                     need new friends??
-                  </button>
+                  </button>*/}
                 </div>
               ) : (
                 "No friends online"

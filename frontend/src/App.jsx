@@ -42,7 +42,7 @@ function App() {
         <Route path="/profile" element={authUser ? <ProfilePage /> : <Navigate to="/login" />} />
         <Route path="/forgot-pass-link" element={<ForgotPassLink/>} />
         <Route path="/reset-password/:token" element={<ResetPasswordPage/>} />
-        <Route path="/graffiti" element={<GraffitiWall />} />
+        {/*<Route path="/graffiti" element={<GraffitiWall />} />*/}
       </Routes>
 
       <Toaster />

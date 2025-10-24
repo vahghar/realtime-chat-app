@@ -107,15 +107,15 @@ export const useChatStore = create((set, get) => ({
             });
             console.log("👤 Current user ID:", authUser._id);
             console.log("🔌 Current socket ID:", socket.id);
-            console.log("✅ Is receiver match?", newMessage.receiverId === authUser._id);
+            console.log("✅ Is receiver match?", newMessage.receiverId.toString() === authUser._id.toString());
 
-            if (newMessage.receiverId === authUser._id) {
+            if (newMessage.receiverId.toString() === authUser._id.toString()) {
                 console.log("🎯 Message is for current user, processing...");
 
                 try {
                     let decryptedText = "";
 
-                    if (newMessage.receiverId === authUser._id && newMessage.encryptedText) {
+                    if (newMessage.receiverId.toString() === authUser._id.toString() && newMessage.encryptedText) {
                         console.log("🔓 Decrypting as receiver with encryptedText");
                         decryptedText = await decryptMessage(newMessage.encryptedText, JSON.parse(localStorage.getItem('privateKey')));
                     } else if (newMessage.senderId === authUser._id && newMessage.encryptedTextForSender) {

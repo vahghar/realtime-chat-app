@@ -13,10 +13,10 @@ function LandingPage() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
-              Secure Conversations, <span className="text-primary">Simplified</span>
+              Secure Conversations<span className="text-primary"> Mostly</span>
             </h1>
             <p className="mt-6 text-lg leading-8 text-muted-foreground">
-              End-to-end encrypted messaging that puts your privacy first. Connect with confidence, knowing your conversations are for your eyes only.
+              Another chat app, now with slightly more encryption. Send messages and memes fully encrypted, fully useless, and fully yours.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Link to="/signup" className="rounded-md bg-primary px-3.5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-90 transition-all">
@@ -33,7 +33,7 @@ function LandingPage() {
             <div className="mx-auto max-w-2xl text-center">
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Everything you need for secure communication</h2>
               <p className="mt-6 text-lg leading-8 text-muted-foreground">
-                Built with cutting-edge encryption technology and modern design principles.
+                Encrypted, slightly glitchy, and probably not life-changing 
               </p>
             </div>
 
@@ -45,7 +45,7 @@ function LandingPage() {
                     End-to-End Encryption
                   </dt>
                   <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-muted-foreground">
-                    <p className="flex-auto">Your messages are encrypted from the moment you hit send until they reach the recipient.</p>
+                    <p className="flex-auto">Your messages are scrambled so well, not even we can read them. Seriously.</p>
                   </dd>
                 </div>
                 <div className="flex flex-col">
@@ -54,7 +54,7 @@ function LandingPage() {
                     Real-Time Messaging
                   </dt>
                   <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-muted-foreground">
-                    <p className="flex-auto">Instant message delivery with real-time typing indicators and read receipts.</p>
+                    <p className="flex-auto">Instant-ish messages, with typing indicators and read receipts. We promise it’s faster than a carrier pigeon.</p>
                   </dd>
                 </div>
                 <div className="flex flex-col">
@@ -63,7 +63,7 @@ function LandingPage() {
                     Privacy First
                   </dt>
                   <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-muted-foreground">
-                    <p className="flex-auto">Your data belongs to you. We can't read your messages, and neither can anyone else.</p>
+                    <p className="flex-auto">Your data belongs to you. We can’t read your messages, and honestly, we probably don’t want to.</p>
                   </dd>
                 </div>
               </dl>
